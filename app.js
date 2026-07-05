@@ -1,5 +1,5 @@
 /**
- * SamFile — App Logic
+ * Filefy — App Logic
  * Multi-tool file conversion platform
  * 100% client-side processing
  */
@@ -371,12 +371,12 @@ function showToast(message, type = 'info') {
 // Conversion Counter (localStorage)
 // ============================================================
 function getConversionCount() {
-  return parseInt(localStorage.getItem('samfile_conversions') || '0');
+  return parseInt(localStorage.getItem('filefy_conversions') || '0');
 }
 
 function addConversions(count) {
   const total = getConversionCount() + count;
-  localStorage.setItem('samfile_conversions', total.toString());
+  localStorage.setItem('filefy_conversions', total.toString());
   DOM.totalConversions.textContent = total;
 }
 
@@ -938,7 +938,7 @@ function showMultiResult() {
       const zipUrl = URL.createObjectURL(zipBlob);
       const a = document.createElement('a');
       a.href = zipUrl;
-      a.download = `samfile_${currentTool.id}_${Date.now()}.zip`;
+      a.download = `filefy_${currentTool.id}_${Date.now()}.zip`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1595,9 +1595,9 @@ DOM.feedbackSubmit.addEventListener('click', () => {
   if (!message) { showToast('Please write your feedback', 'error'); return; }
 
   const starString = '★'.repeat(feedbackRating) + '☆'.repeat(5 - feedbackRating);
-  const subject = encodeURIComponent(`SamFile Feedback — ${starString} (${feedbackRating}/5)`);
+  const subject = encodeURIComponent(`Filefy Feedback — ${starString} (${feedbackRating}/5)`);
   const body = encodeURIComponent(
-    `Rating: ${starString} (${feedbackRating}/5)\nName: ${name}\n\n--- Feedback ---\n${message}\n\n— Sent from SamFile`
+    `Rating: ${starString} (${feedbackRating}/5)\nName: ${name}\n\n--- Feedback ---\n${message}\n\n— Sent from Filefy`
   );
 
   window.open(`mailto:samarthr.tech@gmail.com?subject=${subject}&body=${body}`, '_self');
@@ -1619,4 +1619,4 @@ renderToolCards();
 initConversionCounter();
 updateWordCounterStats('');
 
-console.log('SamFile loaded — ready to convert! 🚀');
+console.log('Filefy loaded — ready to convert! 🚀');
