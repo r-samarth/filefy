@@ -420,6 +420,28 @@ function renderToolCards() {
 
     card.addEventListener('click', () => openTool(tool.id));
 
+    // --- 3D Parallax Tilt Effect ---
+    // Only apply on non-touch devices
+    if (window.matchMedia("(pointer: fine)").matches) {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = ((y - centerY) / centerY) * -12; // Max rotation 12deg
+        const rotateY = ((x - centerX) / centerX) * 12;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      });
+    }
+
     if (grids[tool.category]) {
       grids[tool.category].appendChild(card);
     }
