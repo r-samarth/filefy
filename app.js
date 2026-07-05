@@ -1642,3 +1642,87 @@ initConversionCounter();
 updateWordCounterStats('');
 
 console.log('Filefy loaded — ready to convert! 🚀');
+
+// ============================================================
+// Particle Cursor Effect (Antigravity Style - Monochrome)
+// ============================================================
+const cursorCanvas = document.getElementById('cursorCanvas');
+if (cursorCanvas) {
+  const ctx = cursorCanvas.getContext('2d');
+  
+  let width, height;
+  let particles = [];
+  let mouse = { x: -1000, y: -1000 };
+  
+  function resizeCanvas() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    cursorCanvas.width = width;
+    cursorCanvas.height = height;
+  }
+  
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    
+    // Spawn particles on move
+    for (let i = 0; i < 3; i++) {
+      particles.push(new Particle(mouse.x, mouse.y));
+    }
+  });
+  
+  class Particle {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.size = Math.random() * 2 + 0.5; // Small particles
+      this.speedX = Math.random() * 2 - 1;
+      this.speedY = Math.random() * 2 - 1;
+      
+      // Monochrome colors (whites, greys, silvers)
+      const shade = Math.floor(Math.random() * 155 + 100); // 100 to 255
+      this.color = `rgba(${shade}, ${shade}, ${shade}, 0.8)`;
+      this.life = 100;
+    }
+    
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      
+      // Drift upwards slightly
+      this.speedY -= 0.02;
+      
+      this.life -= 1.5;
+      this.size -= 0.02;
+    }
+    
+    draw() {
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  function animateParticles() {
+    ctx.clearRect(0, 0, width, height);
+    
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.update();
+      p.draw();
+      
+      if (p.life <= 0 || p.size <= 0) {
+        particles.splice(i, 1);
+        i--;
+      }
+    }
+    
+    requestAnimationFrame(animateParticles);
+  }
+  
+  animateParticles();
+}
