@@ -1697,6 +1697,7 @@ if (cursorCanvas) {
       
       this.life -= 1.5;
       this.size -= 0.02;
+      if (this.size < 0) this.size = 0; // Prevent negative radius error
     }
     
     draw() {
