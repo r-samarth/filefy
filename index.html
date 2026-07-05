@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<meta name="google-adsense-account" content="ca-pub-3714510703987259">
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="FileForge — Convert any file instantly. PDF tools, image converter, document tools. 100% client-side, private, and free.">
+  <meta name="keywords"
+    content="file converter, PDF converter, image converter, PDF to JPG, JPG to PNG, compress PDF, merge PDF, split PDF, word counter, free converter">
+  <meta name="author" content="FileForge">
+  <meta name="theme-color" content="#06060f">
+  <title>FileForge — Convert Any File, Instantly</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+</head>
+
+<body>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+
+
+  <!-- Feedback Floating Button -->
+  <button class="feedback-trigger" id="feedbackTrigger" type="button" title="Send Feedback">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+    <span class="feedback-trigger__pulse"></span>
+  </button>
+
+  <!-- Feedback Modal Overlay -->
+  <div class="feedback-overlay" id="feedbackOverlay">
+    <div class="feedback-modal" id="feedbackModal">
+      <button class="feedback-modal__close" id="feedbackClose" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div class="feedback-modal__header">
+        <div class="feedback-modal__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </div>
+        <h3 class="feedback-modal__title">We'd love your feedback</h3>
+        <p class="feedback-modal__subtitle">Help us improve FileForge</p>
+      </div>
+      <div class="feedback-modal__body">
+        <div class="feedback-field">
+          <label class="feedback-field__label">How would you rate your experience?</label>
+          <div class="feedback-stars" id="feedbackStars">
+            <button class="feedback-star" data-rating="1" type="button">★</button>
+            <button class="feedback-star" data-rating="2" type="button">★</button>
+            <button class="feedback-star" data-rating="3" type="button">★</button>
+            <button class="feedback-star" data-rating="4" type="button">★</button>
+            <button class="feedback-star" data-rating="5" type="button">★</button>
+          </div>
+          <span class="feedback-stars__text" id="feedbackStarsText">Select a rating</span>
+        </div>
+        <div class="feedback-field">
+          <label class="feedback-field__label" for="feedbackName">Your Name</label>
+          <input type="text" class="feedback-input" id="feedbackName" placeholder="Enter your name" autocomplete="name">
+        </div>
+        <div class="feedback-field">
+          <label class="feedback-field__label" for="feedbackMessage">Your Feedback</label>
+          <textarea class="feedback-textarea" id="feedbackMessage" placeholder="Tell us what you think..."
+            rows="4"></textarea>
+        </div>
+      </div>
+      <button class="feedback-modal__submit" id="feedbackSubmit" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13" />
+          <polygon points="22 2 15 22 11 13 2 9 22 2" />
+        </svg>
+        Send Feedback
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar__left" id="navHome">
+      <img src="logo.jpg" alt="FileForge Logo" class="navbar__logo">
+      <span class="navbar__brand">FileForge</span>
+    </div>
+    <div class="navbar__center hidden" id="navCenter">
+      <button class="navbar__back" id="backBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        All Tools
+      </button>
+      <span class="navbar__tool-label" id="navToolLabel"></span>
+    </div>
+    <div class="navbar__right">
+      <div class="navbar__counter" id="conversionCounter" title="Total files converted">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+        <span id="totalConversions">0</span> converted
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== HOMEPAGE ========== -->
+  <main class="homepage" id="homepage">
+    <section class="hero">
+      <h1 class="hero__title">FileForge</h1>
+      <p class="hero__subtitle">Convert, compress, and transform any file — instantly, privately, free.</p>
+      <div class="hero__badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        100% client-side — your files never leave your device
+      </div>
+      <div class="hero__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" id="toolSearch" placeholder="Search tools... (e.g. PDF to JPG, compress, word count)"
+          autocomplete="off">
+      </div>
+    </section>
+
+    <!-- PDF Tools -->
+    <section class="tool-category" data-category="pdf" id="catPdf">
+      <h2 class="tool-category__title">
+        <span class="tool-category__icon">📄</span>
+        PDF Tools
+      </h2>
+      <div class="tool-grid" id="pdfToolGrid"></div>
+    </section>
+
+    <!-- Image Converter -->
+    <section class="tool-category" data-category="image" id="catImage">
+      <h2 class="tool-category__title">
+        <span class="tool-category__icon">🖼️</span>
+        Image Converter
+      </h2>
+      <div class="tool-grid" id="imageToolGrid"></div>
+    </section>
+
+    <!-- Document Tools -->
+    <section class="tool-category" data-category="document" id="catDocument">
+      <h2 class="tool-category__title">
+        <span class="tool-category__icon">📝</span>
+        Document Tools
+      </h2>
+      <div class="tool-grid" id="documentToolGrid"></div>
+    </section>
+  </main>
+
+  <!-- ========== TOOL WORKSPACE ========== -->
+  <main class="workspace hidden" id="workspace">
+
+    <!-- Tool Hero -->
+    <section class="tool-hero" id="toolHero">
+      <div class="tool-hero__icon" id="toolHeroIcon"></div>
+      <h1 class="tool-hero__title" id="toolHeroTitle"></h1>
+      <p class="tool-hero__subtitle" id="toolHeroSubtitle"></p>
+      <div class="tool-hero__badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        Files never leave your device
+      </div>
+    </section>
+
+    <!-- Dropzone -->
+    <div class="dropzone" id="toolDropzone">
+      <div class="dropzone__inner">
+        <div class="dropzone__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </div>
+        <h2 class="dropzone__title">Drag & drop your files here</h2>
+        <p class="dropzone__text">or click to browse from your computer</p>
+        <button class="dropzone__browse" id="toolBrowseBtn" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+          Browse Files
+        </button>
+        <div class="dropzone__formats" id="toolFormats"></div>
+      </div>
+      <input type="file" class="dropzone__file-input" id="toolFileInput" multiple>
+    </div>
+
+    <!-- Word Counter Area (hidden by default, shown only for word-counter tool) -->
+    <section class="word-counter hidden" id="wordCounterSection">
+      <div class="word-counter__input-area">
+        <textarea id="wordCounterTextarea"
+          placeholder="Paste or type your text here to get instant word count, character count, reading time, and more..."></textarea>
+      </div>
+      <div class="word-counter__stats" id="wordCounterStats"></div>
+    </section>
+
+    <!-- Settings Panel -->
+    <section class="tool-settings hidden" id="toolSettings">
+      <h3 class="tool-settings__title">⚙️ Settings</h3>
+      <div class="tool-settings__body" id="toolSettingsBody"></div>
+    </section>
+
+    <!-- File List -->
+    <section class="file-list hidden" id="toolFileList">
+      <div class="file-list__header">
+        <h3 class="file-list__title">
+          Files
+          <span class="file-list__count" id="toolFileCount">0</span>
+        </h3>
+        <button class="file-list__clear" id="toolClearBtn" type="button">Clear All</button>
+      </div>
+      <div class="file-list__items" id="toolFileItems"></div>
+    </section>
+
+    <!-- Actions -->
+    <section class="actions hidden" id="toolActions">
+      <button class="actions__convert-btn" id="toolConvertBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="16 16 12 12 8 16" />
+          <line x1="12" y1="12" x2="12" y2="21" />
+          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+        </svg>
+        <span id="toolConvertLabel">Convert</span>
+      </button>
+    </section>
+
+    <!-- Progress -->
+    <section class="progress hidden" id="toolProgress">
+      <div class="progress__bar-track">
+        <div class="progress__bar-fill" id="toolProgressBar"></div>
+      </div>
+      <p class="progress__text" id="toolProgressText">Processing...</p>
+    </section>
+
+    <!-- Results -->
+    <section class="results hidden" id="toolResults">
+      <div class="results__card">
+        <div class="results__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+        </div>
+        <h3 class="results__title" id="resultsTitle">Conversion Complete!</h3>
+        <p class="results__info" id="resultsInfo"></p>
+        <p class="results__time" id="resultsTime">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg>
+          <span id="resultsTimeText">Generated in 0.00s</span>
+        </p>
+
+        <!-- Preview (for image outputs) -->
+        <div class="results__preview hidden" id="resultsPreview"></div>
+
+        <!-- Individual download items -->
+        <div class="results__downloads hidden" id="resultsDownloads"></div>
+
+        <!-- Download All as ZIP -->
+        <button class="results__download-all hidden" id="downloadAllBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download All (ZIP)
+        </button>
+
+        <!-- Download Single -->
+        <button class="results__download-single hidden" id="downloadSingleBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          <span id="downloadSingleLabel">Download</span>
+        </button>
+
+        <!-- New Conversion -->
+        <button class="results__new" id="newConversionBtn" type="button">Start New Conversion</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Watermark -->
+  <a href="https://samarth-r.vercel.app/" target="_blank" rel="noopener noreferrer" class="watermark" id="watermark">
+    <div class="watermark__glow"></div>
+    <div class="watermark__content">
+      <span class="watermark__label">made by</span>
+      <span class="watermark__name">Sam</span>
+    </div>
+    <div class="watermark__fullname">Samarth R</div>
+    <div class="watermark__arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <line x1="7" y1="17" x2="17" y2="7" />
+        <polyline points="7 7 17 7 17 17" />
+      </svg>
+    </div>
+  </a>
+
+  <!-- Libraries (CDN) -->
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
