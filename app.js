@@ -1,5 +1,5 @@
 /**
- * FileForge — App Logic
+ * SamFile — App Logic
  * Multi-tool file conversion platform
  * 100% client-side processing
  */
@@ -371,12 +371,12 @@ function showToast(message, type = 'info') {
 // Conversion Counter (localStorage)
 // ============================================================
 function getConversionCount() {
-  return parseInt(localStorage.getItem('fileforge_conversions') || '0');
+  return parseInt(localStorage.getItem('samfile_conversions') || '0');
 }
 
 function addConversions(count) {
   const total = getConversionCount() + count;
-  localStorage.setItem('fileforge_conversions', total.toString());
+  localStorage.setItem('samfile_conversions', total.toString());
   DOM.totalConversions.textContent = total;
 }
 
@@ -938,7 +938,7 @@ function showMultiResult() {
       const zipUrl = URL.createObjectURL(zipBlob);
       const a = document.createElement('a');
       a.href = zipUrl;
-      a.download = `fileforge_${currentTool.id}_${Date.now()}.zip`;
+      a.download = `samfile_${currentTool.id}_${Date.now()}.zip`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1595,9 +1595,9 @@ DOM.feedbackSubmit.addEventListener('click', () => {
   if (!message) { showToast('Please write your feedback', 'error'); return; }
 
   const starString = '★'.repeat(feedbackRating) + '☆'.repeat(5 - feedbackRating);
-  const subject = encodeURIComponent(`FileForge Feedback — ${starString} (${feedbackRating}/5)`);
+  const subject = encodeURIComponent(`SamFile Feedback — ${starString} (${feedbackRating}/5)`);
   const body = encodeURIComponent(
-    `Rating: ${starString} (${feedbackRating}/5)\nName: ${name}\n\n--- Feedback ---\n${message}\n\n— Sent from FileForge`
+    `Rating: ${starString} (${feedbackRating}/5)\nName: ${name}\n\n--- Feedback ---\n${message}\n\n— Sent from SamFile`
   );
 
   window.open(`mailto:samarthr.tech@gmail.com?subject=${subject}&body=${body}`, '_self');
@@ -1619,4 +1619,4 @@ renderToolCards();
 initConversionCounter();
 updateWordCounterStats('');
 
-console.log('FileForge loaded — ready to convert! 🚀');
+console.log('SamFile loaded — ready to convert! 🚀');
