@@ -11,8 +11,10 @@
   <meta name="keywords"
     content="file converter, PDF converter, image converter, PDF to JPG, JPG to PNG, compress PDF, merge PDF, split PDF, word counter, free converter">
   <meta name="author" content="Filefy">
-  <meta name="theme-color" content="#06060f">
+  <meta name="theme-color" content="#050508">
   <title>Filefy — Convert Any File, Instantly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/jpeg" href="logo.jpg">
 </head>
@@ -21,7 +23,10 @@
   <!-- Interactive Particle Cursor Canvas -->
   <canvas id="cursorCanvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
 
-  <!-- Liquid Glass Background Elements -->
+  <!-- Grain / Noise Overlay -->
+  <div class="noise-overlay"></div>
+
+  <!-- Aurora Background Elements -->
   <div class="liquid-bg">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
@@ -148,7 +153,9 @@
     <!-- PDF Tools -->
     <section class="tool-category" data-category="pdf" id="catPdf">
       <h2 class="tool-category__title">
-        <span class="tool-category__icon">📄</span>
+        <span class="tool-category__icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </span>
         PDF Tools
       </h2>
       <div class="tool-grid" id="pdfToolGrid"></div>
@@ -157,7 +164,9 @@
     <!-- Image Converter -->
     <section class="tool-category" data-category="image" id="catImage">
       <h2 class="tool-category__title">
-        <span class="tool-category__icon">🖼️</span>
+        <span class="tool-category__icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </span>
         Image Converter
       </h2>
       <div class="tool-grid" id="imageToolGrid"></div>
@@ -166,7 +175,9 @@
     <!-- Document Tools -->
     <section class="tool-category" data-category="document" id="catDocument">
       <h2 class="tool-category__title">
-        <span class="tool-category__icon">📝</span>
+        <span class="tool-category__icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </span>
         Document Tools
       </h2>
       <div class="tool-grid" id="documentToolGrid"></div>
@@ -226,7 +237,7 @@
 
     <!-- Settings Panel -->
     <section class="tool-settings hidden" id="toolSettings">
-      <h3 class="tool-settings__title">⚙️ Settings</h3>
+      <h3 class="tool-settings__title">Settings</h3>
       <div class="tool-settings__body" id="toolSettingsBody"></div>
     </section>
 
