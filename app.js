@@ -1,7 +1,8 @@
 /**
- * Filefy — App Logic
+ * Filefy 3.0: App Logic
  * Multi-tool file conversion platform
  * 100% client-side processing
+ * Premium warm cream UI with SVG icons
  */
 
 // ============================================================
@@ -13,6 +14,28 @@ if (typeof pdfjsLib !== 'undefined') {
 }
 
 // ============================================================
+// SVG Icon Library (replaces emoji)
+// ============================================================
+const ICONS = {
+  // PDF Tools
+  'all-to-pdf': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`,
+  'pdf-to-jpg': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+  'pdf-to-png': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`,
+  'split-pdf': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="16" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>`,
+  'merge-pdf': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.828L3 3"/><path d="m15 9 6-6"/></svg>`,
+  'compress-pdf': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><polyline points="12 12 12 21"/><polyline points="8 17 12 21 16 17"/></svg>`,
+  // Image Converter
+  'image-to-jpg': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" y1="5" x2="22" y2="5"/><line x1="19" y1="2" x2="19" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`,
+  'image-to-png': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`,
+  'image-to-webp': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  'image-to-bmp': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+  'image-compressor': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="7.5 4.21 12 6.81 16.5 4.21"/><polyline points="7.5 19.79 7.5 14.6 3 12"/><polyline points="21 12 16.5 14.6 16.5 19.79"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
+  // Document Tools
+  'word-counter': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+  'text-to-pdf': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+};
+
+// ============================================================
 // Tool Definitions
 // ============================================================
 const TOOLS = [
@@ -22,7 +45,6 @@ const TOOLS = [
     name: 'All to PDF',
     desc: 'Merge any files into a single PDF',
     category: 'pdf',
-    icon: '📄',
     iconClass: 'tool-card__icon--pdf',
     badge: 'popular',
     accept: 'image/*,.pdf,.doc,.docx,.txt,.csv,.json,.xml,.html,.htm,.md,.log,.py,.js,.ts,.css,.java,.c,.cpp,.h,.rb,.go,.rs,.php,.sql,.yaml,.yml,.toml,.ini,.cfg,.conf',
@@ -36,7 +58,6 @@ const TOOLS = [
     name: 'PDF to JPG',
     desc: 'Extract PDF pages as JPG images',
     category: 'pdf',
-    icon: '🖼️',
     iconClass: 'tool-card__icon--convert',
     badge: 'popular',
     accept: '.pdf',
@@ -52,7 +73,6 @@ const TOOLS = [
     name: 'PDF to PNG',
     desc: 'Extract PDF pages as PNG images',
     category: 'pdf',
-    icon: '🎨',
     iconClass: 'tool-card__icon--convert',
     badge: null,
     accept: '.pdf',
@@ -66,7 +86,6 @@ const TOOLS = [
     name: 'Split PDF',
     desc: 'Split a PDF into individual pages',
     category: 'pdf',
-    icon: '✂️',
     iconClass: 'tool-card__icon--pdf',
     badge: null,
     accept: '.pdf',
@@ -80,7 +99,6 @@ const TOOLS = [
     name: 'Merge PDF',
     desc: 'Combine multiple PDFs into one',
     category: 'pdf',
-    icon: '📎',
     iconClass: 'tool-card__icon--pdf',
     badge: 'popular',
     accept: '.pdf',
@@ -94,7 +112,6 @@ const TOOLS = [
     name: 'Compress PDF',
     desc: 'Reduce PDF file size',
     category: 'pdf',
-    icon: '📦',
     iconClass: 'tool-card__icon--compress',
     badge: 'new',
     accept: '.pdf',
@@ -111,7 +128,6 @@ const TOOLS = [
     name: 'Image to JPG',
     desc: 'Convert any image to JPG format',
     category: 'image',
-    icon: '🌅',
     iconClass: 'tool-card__icon--image',
     badge: 'popular',
     accept: 'image/*',
@@ -127,7 +143,6 @@ const TOOLS = [
     name: 'Image to PNG',
     desc: 'Convert any image to PNG format',
     category: 'image',
-    icon: '🎯',
     iconClass: 'tool-card__icon--image',
     badge: null,
     accept: 'image/*',
@@ -141,7 +156,6 @@ const TOOLS = [
     name: 'Image to WEBP',
     desc: 'Convert to modern WEBP format (smaller size)',
     category: 'image',
-    icon: '⚡',
     iconClass: 'tool-card__icon--convert',
     badge: 'new',
     accept: 'image/*',
@@ -157,7 +171,6 @@ const TOOLS = [
     name: 'Image to BMP',
     desc: 'Convert any image to BMP format',
     category: 'image',
-    icon: '🖥️',
     iconClass: 'tool-card__icon--image',
     badge: null,
     accept: 'image/*',
@@ -171,7 +184,6 @@ const TOOLS = [
     name: 'Image Compressor',
     desc: 'Compress images with adjustable quality',
     category: 'image',
-    icon: '🗜️',
     iconClass: 'tool-card__icon--compress',
     badge: 'new',
     accept: 'image/*',
@@ -188,7 +200,6 @@ const TOOLS = [
     name: 'Word Counter',
     desc: 'Count words, characters, sentences & reading time',
     category: 'document',
-    icon: '📊',
     iconClass: 'tool-card__icon--document',
     badge: 'new',
     accept: '.txt,.doc,.docx,.md,.html,.htm,.csv,.json,.xml',
@@ -203,7 +214,6 @@ const TOOLS = [
     name: 'Text to PDF',
     desc: 'Convert plain text files to formatted PDF',
     category: 'document',
-    icon: '📝',
     iconClass: 'tool-card__icon--document',
     badge: null,
     accept: '.txt,.csv,.json,.xml,.html,.htm,.md,.log,.py,.js,.ts,.css,.java,.c,.cpp,.h,.rb,.go,.rs,.php,.sql,.yaml,.yml,.toml,.ini,.cfg,.conf,.sh,.bat',
@@ -385,7 +395,7 @@ function initConversionCounter() {
 }
 
 // ============================================================
-// Homepage — Render Tool Cards
+// Homepage: Render Tool Cards (Tactile Bento Cards)
 // ============================================================
 function renderToolCards() {
   const grids = {
@@ -394,13 +404,16 @@ function renderToolCards() {
     document: DOM.documentToolGrid,
   };
 
-  Object.values(grids).forEach(g => (g.innerHTML = ''));
+  Object.values(grids).forEach(g => {
+    if (g) g.innerHTML = '';
+  });
 
   TOOLS.forEach((tool, idx) => {
     const card = document.createElement('div');
     card.className = 'tool-card';
     card.dataset.toolId = tool.id;
-    card.style.animationDelay = `${idx * 0.05}s`;
+    card.dataset.category = tool.category;
+    card.style.animationDelay = `${idx * 0.04}s`;
 
     let badgeHTML = '';
     if (tool.badge === 'popular') {
@@ -409,38 +422,32 @@ function renderToolCards() {
       badgeHTML = '<span class="tool-card__badge tool-card__badge--new">New</span>';
     }
 
+    const iconSVG = ICONS[tool.id] || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/></svg>';
+    const formatDisplay = tool.formats.slice(0, 3).join(' • ');
+
     card.innerHTML = `
-      ${badgeHTML}
-      <div class="tool-card__icon ${tool.iconClass}">
-        <span style="font-size:1.5rem">${tool.icon}</span>
+      <div class="tool-card__inner">
+        <div class="tool-card__top">
+          <div class="tool-card__icon ${tool.iconClass}">
+            ${iconSVG}
+          </div>
+          ${badgeHTML}
+        </div>
+        <div class="tool-card__title">${tool.name}</div>
+        <div class="tool-card__desc">${tool.desc}</div>
+        <div class="tool-card__footer">
+          <span class="tool-card__formats">${formatDisplay}</span>
+          <span class="tool-card__arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </span>
+        </div>
       </div>
-      <div class="tool-card__title">${tool.name}</div>
-      <div class="tool-card__desc">${tool.desc}</div>
     `;
 
     card.addEventListener('click', () => openTool(tool.id));
-
-    // --- 3D Parallax Tilt Effect ---
-    // Only apply on non-touch devices
-    if (window.matchMedia("(pointer: fine)").matches) {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateX = ((y - centerY) / centerY) * -12; // Max rotation 12deg
-        const rotateY = ((x - centerX) / centerX) * 12;
-        
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-      });
-
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-      });
-    }
 
     if (grids[tool.category]) {
       grids[tool.category].appendChild(card);
@@ -449,29 +456,103 @@ function renderToolCards() {
 }
 
 // ============================================================
-// Search / Filter Tools
+// Search & Filter Tools
 // ============================================================
-DOM.toolSearch.addEventListener('input', () => {
-  const query = DOM.toolSearch.value.toLowerCase().trim();
+const searchClearBtn = document.getElementById('searchClearBtn');
+
+function filterTools() {
+  const query = DOM.toolSearch ? DOM.toolSearch.value.toLowerCase().trim() : '';
+  const activeTab = document.querySelector('.category-tab.active');
+  const activeCategory = activeTab ? activeTab.dataset.category : 'all';
   const cards = document.querySelectorAll('.tool-card');
+
+  if (searchClearBtn) {
+    searchClearBtn.classList.toggle('hidden', !query);
+  }
 
   cards.forEach(card => {
     const tool = TOOLS.find(t => t.id === card.dataset.toolId);
     if (!tool) return;
-    const searchable = `${tool.name} ${tool.desc} ${tool.category} ${tool.formats.join(' ')}`.toLowerCase();
-    card.style.display = searchable.includes(query) ? '' : 'none';
+
+    const matchesQuery = !query || `${tool.name} ${tool.desc} ${tool.category} ${tool.formats.join(' ')}`.toLowerCase().includes(query);
+    const matchesCategory = activeCategory === 'all' || tool.category === activeCategory;
+
+    card.style.display = (matchesQuery && matchesCategory) ? '' : 'none';
   });
 
   // Hide empty categories
   [DOM.catPdf, DOM.catImage, DOM.catDocument].forEach(cat => {
+    if (!cat) return;
     const grid = cat.querySelector('.tool-grid');
     const visibleCards = grid.querySelectorAll('.tool-card:not([style*="display: none"])');
-    cat.style.display = visibleCards.length > 0 ? '' : 'none';
+    const matchesTab = activeCategory === 'all' || cat.dataset.category === activeCategory;
+    cat.style.display = (visibleCards.length > 0 && matchesTab) ? '' : 'none';
   });
-});
+}
+
+if (DOM.toolSearch) {
+  DOM.toolSearch.addEventListener('input', filterTools);
+}
+
+if (searchClearBtn) {
+  searchClearBtn.addEventListener('click', () => {
+    DOM.toolSearch.value = '';
+    filterTools();
+    DOM.toolSearch.focus();
+  });
+}
+
+// Category filter tabs
+function initCategoryTabs() {
+  const tabsContainer = document.getElementById('categoryTabs');
+  if (!tabsContainer) return;
+
+  tabsContainer.addEventListener('click', (e) => {
+    const btn = e.target.closest('.category-tab');
+    if (!btn) return;
+
+    tabsContainer.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterTools();
+  });
+}
+
+// Cmd+K / Ctrl+K keyboard shortcut to focus search
+function initSearchKeyboardShortcut() {
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (DOM.homepage && !DOM.homepage.classList.contains('hidden') && DOM.toolSearch) {
+        DOM.toolSearch.focus();
+        DOM.toolSearch.select();
+      }
+    }
+  });
+}
+
+// Navbar smooth scrolling & interactions
+function initNavbarInteractions() {
+  const navFeedbackBtn = document.getElementById('navFeedbackBtn');
+  if (navFeedbackBtn && typeof openFeedbackModal === 'function') {
+    navFeedbackBtn.addEventListener('click', openFeedbackModal);
+  }
+
+  document.querySelectorAll('.navbar__link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      if (targetId && targetId.startsWith('#')) {
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          e.preventDefault();
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+}
 
 // ============================================================
-// Router — Open / Close Tool
+// Router: Open / Close Tool
 // ============================================================
 function openTool(toolId) {
   const tool = TOOLS.find(t => t.id === toolId);
@@ -487,8 +568,9 @@ function openTool(toolId) {
   DOM.navCenter.classList.remove('hidden');
   DOM.navToolLabel.textContent = tool.name;
 
-  // Configure hero
-  DOM.toolHeroIcon.innerHTML = `<span style="font-size:1.6rem">${tool.icon}</span>`;
+  // Configure hero with SVG icon
+  const iconSVG = ICONS[tool.id] || '';
+  DOM.toolHeroIcon.innerHTML = iconSVG;
   DOM.toolHeroIcon.className = `tool-hero__icon ${tool.iconClass}`;
   DOM.toolHeroTitle.textContent = tool.name;
   DOM.toolHeroSubtitle.textContent = tool.desc;
@@ -858,7 +940,7 @@ async function startConversion() {
 
     // Update counter
     addConversions(files.length);
-    showToast('Conversion complete! 🎉', 'success');
+    showToast('Conversion complete', 'success');
 
   } catch (err) {
     console.error('Conversion error:', err);
@@ -876,8 +958,8 @@ function setProgress(pct, text) {
 
 function showSingleResult() {
   const blob = outputFiles[0]?.blob;
-  DOM.resultsTitle.textContent = 'Your file is ready!';
-  DOM.resultsInfo.textContent = `${files.length} file${files.length > 1 ? 's' : ''} processed • ${blob ? formatSize(blob.size) : ''}`;
+  DOM.resultsTitle.textContent = 'Your file is ready';
+  DOM.resultsInfo.textContent = `${files.length} file${files.length > 1 ? 's' : ''} processed · ${blob ? formatSize(blob.size) : ''}`;
 
   DOM.downloadSingleBtn.classList.remove('hidden');
   DOM.downloadAllBtn.classList.add('hidden');
@@ -897,7 +979,7 @@ function showSingleResult() {
 }
 
 function showMultiResult() {
-  DOM.resultsTitle.textContent = 'Conversion Complete!';
+  DOM.resultsTitle.textContent = 'Conversion complete';
   DOM.resultsInfo.textContent = `${outputFiles.length} file${outputFiles.length > 1 ? 's' : ''} created`;
 
   DOM.downloadSingleBtn.classList.add('hidden');
@@ -965,7 +1047,7 @@ function showMultiResult() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(zipUrl);
-      showToast('ZIP downloaded!', 'success');
+      showToast('ZIP downloaded', 'success');
     } catch (err) {
       showToast('Failed to create ZIP: ' + err.message, 'error');
     }
@@ -1399,7 +1481,7 @@ async function embedDocxToPdf(masterPdf, fileEntry) {
     position: fixed; left: -9999px; top: 0;
     width: 595px; padding: 40px;
     background: white; color: black;
-    font-family: 'Inter', Arial, sans-serif;
+    font-family: 'Geist', Arial, sans-serif;
     font-size: 12pt; line-height: 1.6;
   `;
   container.innerHTML = html;
@@ -1562,7 +1644,7 @@ function updateWordCounterStats(text) {
 // Feedback System
 // ============================================================
 let feedbackRating = 0;
-const ratingLabels = ['', 'Terrible 😞', 'Poor 😕', 'Okay 😐', 'Good 😊', 'Amazing 🤩'];
+const ratingLabels = ['', 'Terrible', 'Poor', 'Okay', 'Good', 'Amazing'];
 
 function openFeedbackModal() {
   DOM.feedbackOverlay.classList.add('feedback-overlay--active');
@@ -1617,9 +1699,9 @@ DOM.feedbackSubmit.addEventListener('click', () => {
   if (!message) { showToast('Please write your feedback', 'error'); return; }
 
   const starString = '★'.repeat(feedbackRating) + '☆'.repeat(5 - feedbackRating);
-  const subject = encodeURIComponent(`Filefy Feedback — ${starString} (${feedbackRating}/5)`);
+  const subject = encodeURIComponent(`Filefy Feedback: ${starString} (${feedbackRating}/5)`);
   const body = encodeURIComponent(
-    `Rating: ${starString} (${feedbackRating}/5)\nName: ${name}\n\n--- Feedback ---\n${message}\n\n— Sent from Filefy`
+    `Rating: ${starString} (${feedbackRating}/5)\nName: ${name}\n\n--- Feedback ---\n${message}\n\n- Sent from Filefy`
   );
 
   window.open(`mailto:samarthr.tech@gmail.com?subject=${subject}&body=${body}`, '_self');
@@ -1635,95 +1717,39 @@ DOM.feedbackSubmit.addEventListener('click', () => {
 });
 
 // ============================================================
+// Scroll Reveal (IntersectionObserver)
+// ============================================================
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  // Observe tool categories
+  document.querySelectorAll('.tool-category').forEach((el, i) => {
+    el.classList.add('reveal');
+    el.style.transitionDelay = `${i * 0.08}s`;
+    observer.observe(el);
+  });
+}
+
+// ============================================================
 // Init
 // ============================================================
 renderToolCards();
 initConversionCounter();
 updateWordCounterStats('');
+initScrollReveal();
+initCategoryTabs();
+initSearchKeyboardShortcut();
+initNavbarInteractions();
 
-console.log('Filefy loaded — ready to convert! 🚀');
+console.log('Filefy 3.0 loaded: ready to convert');
 
-// ============================================================
-// Particle Cursor Effect (Antigravity Style - Monochrome)
-// ============================================================
-const cursorCanvas = document.getElementById('cursorCanvas');
-if (cursorCanvas) {
-  const ctx = cursorCanvas.getContext('2d');
-  
-  let width, height;
-  let particles = [];
-  let mouse = { x: -1000, y: -1000 };
-  
-  function resizeCanvas() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    cursorCanvas.width = width;
-    cursorCanvas.height = height;
-  }
-  
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-  
-  window.addEventListener('mousemove', (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    
-    // Spawn particles on move
-    for (let i = 0; i < 3; i++) {
-      particles.push(new Particle(mouse.x, mouse.y));
-    }
-  });
-  
-  class Particle {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-      this.size = Math.random() * 2 + 0.5; // Small particles
-      this.speedX = Math.random() * 2 - 1;
-      this.speedY = Math.random() * 2 - 1;
-      
-      // Monochrome colors (whites, greys, silvers)
-      const shade = Math.floor(Math.random() * 155 + 100); // 100 to 255
-      this.color = `rgba(${shade}, ${shade}, ${shade}, 0.8)`;
-      this.life = 100;
-    }
-    
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      
-      // Drift upwards slightly
-      this.speedY -= 0.02;
-      
-      this.life -= 1.5;
-      this.size -= 0.02;
-      if (this.size < 0) this.size = 0; // Prevent negative radius error
-    }
-    
-    draw() {
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-  
-  function animateParticles() {
-    ctx.clearRect(0, 0, width, height);
-    
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.update();
-      p.draw();
-      
-      if (p.life <= 0 || p.size <= 0) {
-        particles.splice(i, 1);
-        i--;
-      }
-    }
-    
-    requestAnimationFrame(animateParticles);
-  }
-  
-  animateParticles();
-}
