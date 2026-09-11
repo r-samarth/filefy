@@ -1,8 +1,8 @@
 /**
- * Filefy 3.0 — App Logic
+ * Filefy 3.0: App Logic
  * Multi-tool file conversion platform
  * 100% client-side processing
- * Premium dark-tech UI with SVG icons
+ * Premium warm cream UI with SVG icons
  */
 
 // ============================================================
@@ -395,7 +395,7 @@ function initConversionCounter() {
 }
 
 // ============================================================
-// Homepage — Render Tool Cards (Double-Bezel + SVG Icons)
+// Homepage: Render Tool Cards (Tactile Bento Cards)
 // ============================================================
 function renderToolCards() {
   const grids = {
@@ -404,13 +404,16 @@ function renderToolCards() {
     document: DOM.documentToolGrid,
   };
 
-  Object.values(grids).forEach(g => (g.innerHTML = ''));
+  Object.values(grids).forEach(g => {
+    if (g) g.innerHTML = '';
+  });
 
   TOOLS.forEach((tool, idx) => {
     const card = document.createElement('div');
     card.className = 'tool-card';
     card.dataset.toolId = tool.id;
-    card.style.animationDelay = `${idx * 0.05}s`;
+    card.dataset.category = tool.category;
+    card.style.animationDelay = `${idx * 0.04}s`;
 
     let badgeHTML = '';
     if (tool.badge === 'popular') {
@@ -420,46 +423,31 @@ function renderToolCards() {
     }
 
     const iconSVG = ICONS[tool.id] || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/></svg>';
+    const formatDisplay = tool.formats.slice(0, 3).join(' • ');
 
     card.innerHTML = `
       <div class="tool-card__inner">
-        ${badgeHTML}
-        <div class="tool-card__icon ${tool.iconClass}">
-          ${iconSVG}
+        <div class="tool-card__top">
+          <div class="tool-card__icon ${tool.iconClass}">
+            ${iconSVG}
+          </div>
+          ${badgeHTML}
         </div>
         <div class="tool-card__title">${tool.name}</div>
         <div class="tool-card__desc">${tool.desc}</div>
+        <div class="tool-card__footer">
+          <span class="tool-card__formats">${formatDisplay}</span>
+          <span class="tool-card__arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </span>
+        </div>
       </div>
     `;
 
     card.addEventListener('click', () => openTool(tool.id));
-
-    // --- 3D Parallax Tilt + Spotlight Border ---
-    if (window.matchMedia("(pointer: fine)").matches) {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const rotateX = ((y - centerY) / centerY) * -10;
-        const rotateY = ((x - centerX) / centerX) * 10;
-
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px) scale3d(1.02, 1.02, 1.02)`;
-
-        // Spotlight follow cursor
-        const percentX = (x / rect.width) * 100;
-        const percentY = (y / rect.height) * 100;
-        card.style.setProperty('--mouse-x', percentX + '%');
-        card.style.setProperty('--mouse-y', percentY + '%');
-      });
-
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale3d(1, 1, 1)`;
-      });
-    }
 
     if (grids[tool.category]) {
       grids[tool.category].appendChild(card);
@@ -468,29 +456,103 @@ function renderToolCards() {
 }
 
 // ============================================================
-// Search / Filter Tools
+// Search & Filter Tools
 // ============================================================
-DOM.toolSearch.addEventListener('input', () => {
-  const query = DOM.toolSearch.value.toLowerCase().trim();
+const searchClearBtn = document.getElementById('searchClearBtn');
+
+function filterTools() {
+  const query = DOM.toolSearch ? DOM.toolSearch.value.toLowerCase().trim() : '';
+  const activeTab = document.querySelector('.category-tab.active');
+  const activeCategory = activeTab ? activeTab.dataset.category : 'all';
   const cards = document.querySelectorAll('.tool-card');
+
+  if (searchClearBtn) {
+    searchClearBtn.classList.toggle('hidden', !query);
+  }
 
   cards.forEach(card => {
     const tool = TOOLS.find(t => t.id === card.dataset.toolId);
     if (!tool) return;
-    const searchable = `${tool.name} ${tool.desc} ${tool.category} ${tool.formats.join(' ')}`.toLowerCase();
-    card.style.display = searchable.includes(query) ? '' : 'none';
+
+    const matchesQuery = !query || `${tool.name} ${tool.desc} ${tool.category} ${tool.formats.join(' ')}`.toLowerCase().includes(query);
+    const matchesCategory = activeCategory === 'all' || tool.category === activeCategory;
+
+    card.style.display = (matchesQuery && matchesCategory) ? '' : 'none';
   });
 
   // Hide empty categories
   [DOM.catPdf, DOM.catImage, DOM.catDocument].forEach(cat => {
+    if (!cat) return;
     const grid = cat.querySelector('.tool-grid');
     const visibleCards = grid.querySelectorAll('.tool-card:not([style*="display: none"])');
-    cat.style.display = visibleCards.length > 0 ? '' : 'none';
+    const matchesTab = activeCategory === 'all' || cat.dataset.category === activeCategory;
+    cat.style.display = (visibleCards.length > 0 && matchesTab) ? '' : 'none';
   });
-});
+}
+
+if (DOM.toolSearch) {
+  DOM.toolSearch.addEventListener('input', filterTools);
+}
+
+if (searchClearBtn) {
+  searchClearBtn.addEventListener('click', () => {
+    DOM.toolSearch.value = '';
+    filterTools();
+    DOM.toolSearch.focus();
+  });
+}
+
+// Category filter tabs
+function initCategoryTabs() {
+  const tabsContainer = document.getElementById('categoryTabs');
+  if (!tabsContainer) return;
+
+  tabsContainer.addEventListener('click', (e) => {
+    const btn = e.target.closest('.category-tab');
+    if (!btn) return;
+
+    tabsContainer.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterTools();
+  });
+}
+
+// Cmd+K / Ctrl+K keyboard shortcut to focus search
+function initSearchKeyboardShortcut() {
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (DOM.homepage && !DOM.homepage.classList.contains('hidden') && DOM.toolSearch) {
+        DOM.toolSearch.focus();
+        DOM.toolSearch.select();
+      }
+    }
+  });
+}
+
+// Navbar smooth scrolling & interactions
+function initNavbarInteractions() {
+  const navFeedbackBtn = document.getElementById('navFeedbackBtn');
+  if (navFeedbackBtn && typeof openFeedbackModal === 'function') {
+    navFeedbackBtn.addEventListener('click', openFeedbackModal);
+  }
+
+  document.querySelectorAll('.navbar__link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      if (targetId && targetId.startsWith('#')) {
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          e.preventDefault();
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+}
 
 // ============================================================
-// Router — Open / Close Tool
+// Router: Open / Close Tool
 // ============================================================
 function openTool(toolId) {
   const tool = TOOLS.find(t => t.id === toolId);
@@ -1637,9 +1699,9 @@ DOM.feedbackSubmit.addEventListener('click', () => {
   if (!message) { showToast('Please write your feedback', 'error'); return; }
 
   const starString = '★'.repeat(feedbackRating) + '☆'.repeat(5 - feedbackRating);
-  const subject = encodeURIComponent(`Filefy Feedback — ${starString} (${feedbackRating}/5)`);
+  const subject = encodeURIComponent(`Filefy Feedback: ${starString} (${feedbackRating}/5)`);
   const body = encodeURIComponent(
-    `Rating: ${starString} (${feedbackRating}/5)\nName: ${name}\n\n--- Feedback ---\n${message}\n\n— Sent from Filefy`
+    `Rating: ${starString} (${feedbackRating}/5)\nName: ${name}\n\n--- Feedback ---\n${message}\n\n- Sent from Filefy`
   );
 
   window.open(`mailto:samarthr.tech@gmail.com?subject=${subject}&body=${body}`, '_self');
@@ -1685,97 +1747,9 @@ renderToolCards();
 initConversionCounter();
 updateWordCounterStats('');
 initScrollReveal();
+initCategoryTabs();
+initSearchKeyboardShortcut();
+initNavbarInteractions();
 
-console.log('Filefy 3.0 loaded — ready to convert');
+console.log('Filefy 3.0 loaded: ready to convert');
 
-// ============================================================
-// Particle Cursor Effect (Violet-Tinted)
-// ============================================================
-const cursorCanvas = document.getElementById('cursorCanvas');
-if (cursorCanvas) {
-  const ctx = cursorCanvas.getContext('2d');
-
-  let width, height;
-  let particles = [];
-  let mouse = { x: -1000, y: -1000 };
-
-  function resizeCanvas() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    cursorCanvas.width = width;
-    cursorCanvas.height = height;
-  }
-
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-
-  window.addEventListener('mousemove', (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-
-    // Spawn particles on move
-    for (let i = 0; i < 2; i++) {
-      particles.push(new Particle(mouse.x, mouse.y));
-    }
-  });
-
-  class Particle {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-      this.size = Math.random() * 2.5 + 0.5;
-      this.speedX = Math.random() * 2 - 1;
-      this.speedY = Math.random() * 2 - 1;
-
-      // Violet-tinted particle colors
-      const palette = [
-        [124, 58, 237],   // violet
-        [167, 139, 250],  // light violet
-        [139, 92, 246],   // medium violet
-        [99, 102, 241],   // indigo
-        [196, 181, 253],  // pale lavender
-      ];
-      const color = palette[Math.floor(Math.random() * palette.length)];
-      this.color = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.7)`;
-      this.life = 80;
-    }
-
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-
-      // Drift upwards slightly
-      this.speedY -= 0.02;
-
-      this.life -= 1.5;
-      this.size -= 0.02;
-      if (this.size < 0) this.size = 0;
-    }
-
-    draw() {
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  function animateParticles() {
-    ctx.clearRect(0, 0, width, height);
-
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.update();
-      p.draw();
-
-      if (p.life <= 0 || p.size <= 0) {
-        particles.splice(i, 1);
-        i--;
-      }
-    }
-
-    requestAnimationFrame(animateParticles);
-  }
-
-  animateParticles();
-}
