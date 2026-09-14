@@ -262,6 +262,8 @@ const DOM = {
   toastContainer: $('toastContainer'),
   // Navbar
   navHome: $('navHome'),
+  navLinks: $('navLinks'),
+  navIndicator: $('navIndicator'),
   navCenter: $('navCenter'),
   backBtn: $('backBtn'),
   navToolLabel: $('navToolLabel'),
@@ -410,13 +412,16 @@ function renderToolCards() {
 
   TOOLS.forEach((tool, idx) => {
     const card = document.createElement('div');
-    card.className = 'tool-card';
+    const isBeam = tool.id === 'all-to-pdf';
+    card.className = isBeam ? 'tool-card tool-card--beam' : 'tool-card';
     card.dataset.toolId = tool.id;
     card.dataset.category = tool.category;
     card.style.animationDelay = `${idx * 0.04}s`;
 
     let badgeHTML = '';
-    if (tool.badge === 'popular') {
+    if (isBeam) {
+      badgeHTML = '<span class="tool-card__badge tool-card__badge--beam"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Featured</span>';
+    } else if (tool.badge === 'popular') {
       badgeHTML = '<span class="tool-card__badge tool-card__badge--popular">Popular</span>';
     } else if (tool.badge === 'new') {
       badgeHTML = '<span class="tool-card__badge tool-card__badge--new">New</span>';
@@ -426,6 +431,7 @@ function renderToolCards() {
     const formatDisplay = tool.formats.slice(0, 3).join(' • ');
 
     card.innerHTML = `
+      <div class="tool-card__glow"></div>
       <div class="tool-card__inner">
         <div class="tool-card__top">
           <div class="tool-card__icon ${tool.iconClass}">
@@ -448,10 +454,150 @@ function renderToolCards() {
     `;
 
     card.addEventListener('click', () => openTool(tool.id));
+    bindInteractiveCard(card);
 
     if (grids[tool.category]) {
       grids[tool.category].appendChild(card);
     }
+  });
+}
+
+// ============================================================
+// Interactive 3D Card (Lightswind hover cursor tilt + radial glow)
+// ============================================================
+function bindInteractiveCard(card) {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  let rafId = null;
+
+  card.addEventListener('mousemove', (e) => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      card.style.setProperty('--mx', `${x}px`);
+      card.style.setProperty('--my', `${y}px`);
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotX = ((y - centerY) / centerY) * -7.5;
+      const rotY = ((x - centerX) / centerX) * 7.5;
+
+      card.style.transform = `perspective(800px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+    });
+  });
+
+  card.addEventListener('mouseleave', () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+    card.style.setProperty('--mx', '50%');
+    card.style.setProperty('--my', '50%');
+  });
+}
+
+// ============================================================
+// Beam Flow: 60fps laser border angle updater (All-to-PDF card)
+// ============================================================
+function initBeamFlow() {
+  let angle = 0;
+  function animateBeam() {
+    angle = (angle + 1.2) % 360;
+    const beamCards = document.querySelectorAll('.tool-card--beam');
+    beamCards.forEach(c => c.style.setProperty('--beam-angle', `${angle.toFixed(1)}deg`));
+    requestAnimationFrame(animateBeam);
+  }
+  requestAnimationFrame(animateBeam);
+}
+
+// ============================================================
+// Scroll Rotate Gallery (Lightswind 3D cylindrical fan below heading)
+// ============================================================
+function initScrollRotateGallery() {
+  const gallery = document.getElementById('scrollGallery');
+  if (!gallery) return;
+  const cards = gallery.querySelectorAll('.scroll-gallery__card');
+  if (!cards.length) return;
+
+  let currentAngle = 0;
+  let targetAngle = 0;
+  let mouseOffset = 0;
+
+  function getDimensions() {
+    const w = window.innerWidth;
+    if (w < 480) return { radius: 130, spread: 75 };
+    if (w < 768) return { radius: 175, spread: 90 };
+    return { radius: 260, spread: 110 };
+  }
+
+  function updateCards() {
+    const { radius, spread } = getDimensions();
+    const count = cards.length;
+    const step = spread / (count - 1);
+
+    cards.forEach((card, i) => {
+      const baseAngle = (i - (count - 1) / 2) * step;
+      const angle = baseAngle + currentAngle + mouseOffset;
+      const rad = (angle * Math.PI) / 180;
+
+      const x = Math.sin(rad) * radius;
+      const z = (Math.cos(rad) - 1) * (radius * 0.7);
+      const rotY = angle * 0.72;
+      const rotZ = angle * 0.08;
+
+      const depthFactor = Math.cos(rad);
+      const scale = Math.max(0.78, 0.78 + 0.24 * depthFactor);
+      const opacity = Math.max(0.35, Math.min(1, 0.35 + 0.65 * depthFactor));
+
+      card.style.transform = `translate3d(${x.toFixed(1)}px, 0px, ${z.toFixed(1)}px) rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg) scale(${scale.toFixed(2)})`;
+      card.style.opacity = opacity.toFixed(2);
+      card.style.zIndex = Math.round((depthFactor + 1) * 10);
+    });
+  }
+
+  // Scroll listener: rotating based on scroll progress
+  window.addEventListener('scroll', () => {
+    if (DOM.homepage && DOM.homepage.classList.contains('hidden')) return;
+    const scrollY = window.scrollY;
+    targetAngle = scrollY * 0.16;
+  }, { passive: true });
+
+  // Mouse interaction: cursor creates interactive 3D sway
+  gallery.addEventListener('mousemove', (e) => {
+    const rect = gallery.getBoundingClientRect();
+    const normalizedX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouseOffset = normalizedX * 22;
+  });
+
+  gallery.addEventListener('mouseleave', () => {
+    mouseOffset = 0;
+  });
+
+  // Smooth animation loop for physics-based spring feel
+  function loop() {
+    currentAngle += (targetAngle - currentAngle) * 0.08;
+    updateCards();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // Card click interaction: smooth scroll to category or open tool
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const idx = parseInt(card.dataset.index || '0', 10);
+      if (idx === 0) {
+        document.getElementById('catPdf')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (idx === 1 || idx === 2 || idx === 3) {
+        document.getElementById('catImage')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (idx === 4) {
+        document.getElementById('catDocument')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (idx === 5) {
+        openTool('merge-pdf');
+      } else if (idx === 6) {
+        openTool('compress-pdf');
+      }
+    });
   });
 }
 
@@ -530,16 +676,51 @@ function initSearchKeyboardShortcut() {
   });
 }
 
-// Navbar smooth scrolling & interactions
-function initNavbarInteractions() {
+// ============================================================
+// Exclusive Tab Navbar (Lightswind liquid sliding highlight)
+// ============================================================
+function initExclusiveTabNavbar() {
   const navFeedbackBtn = document.getElementById('navFeedbackBtn');
   if (navFeedbackBtn && typeof openFeedbackModal === 'function') {
     navFeedbackBtn.addEventListener('click', openFeedbackModal);
   }
 
-  document.querySelectorAll('.navbar__link').forEach(link => {
+  const navLinksContainer = document.getElementById('navLinks');
+  const indicator = document.getElementById('navIndicator');
+  const links = document.querySelectorAll('.navbar__link');
+  if (!navLinksContainer || !indicator || !links.length) return;
+
+  function setIndicatorPosition(targetLink) {
+    if (!targetLink) return;
+    const offsetLeft = targetLink.offsetLeft;
+    const width = targetLink.offsetWidth;
+    indicator.style.transform = `translateX(${offsetLeft}px)`;
+    indicator.style.width = `${width}px`;
+    indicator.style.opacity = '1';
+  }
+
+  let activeLink = navLinksContainer.querySelector('.navbar__link.active') || links[0];
+
+  // Initial layout delay for accurate bounding box
+  setTimeout(() => setIndicatorPosition(activeLink), 60);
+
+  window.addEventListener('resize', () => {
+    const currentActive = navLinksContainer.querySelector('.navbar__link.active') || links[0];
+    setIndicatorPosition(currentActive);
+  });
+
+  links.forEach(link => {
+    link.addEventListener('mouseenter', () => {
+      setIndicatorPosition(link);
+    });
+
     link.addEventListener('click', (e) => {
       const targetId = link.getAttribute('href');
+      links.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      activeLink = link;
+      setIndicatorPosition(link);
+
       if (targetId && targetId.startsWith('#')) {
         const targetEl = document.querySelector(targetId);
         if (targetEl) {
@@ -548,6 +729,107 @@ function initNavbarInteractions() {
         }
       }
     });
+  });
+
+  navLinksContainer.addEventListener('mouseleave', () => {
+    const currentActive = navLinksContainer.querySelector('.navbar__link.active') || activeLink;
+    setIndicatorPosition(currentActive);
+  });
+
+  // ScrollSpy: auto-track active section as user scrolls
+  const sectionIds = ['catPdf', 'catImage', 'catDocument'];
+  const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+  window.addEventListener('scroll', () => {
+    if (DOM.homepage && DOM.homepage.classList.contains('hidden')) return;
+    const scrollPos = window.scrollY + 180;
+    for (let i = sections.length - 1; i >= 0; i--) {
+      const sec = sections[i];
+      if (sec.offsetTop <= scrollPos) {
+        const matchingLink = navLinksContainer.querySelector(`.navbar__link[href="#${sec.id}"]`);
+        if (matchingLink && !matchingLink.classList.contains('active')) {
+          links.forEach(l => l.classList.remove('active'));
+          matchingLink.classList.add('active');
+          activeLink = matchingLink;
+          setIndicatorPosition(matchingLink);
+        }
+        break;
+      }
+    }
+  }, { passive: true });
+}
+
+// ============================================================
+// Mobile Animated Hamburger & Drawer Menu (<= 768px)
+// ============================================================
+function initMobileNavbarMenu() {
+  const hamburgerBtn = document.getElementById('navHamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const backdrop = document.getElementById('mobileMenuBackdrop');
+  const feedbackBtn = document.getElementById('mobileFeedbackBtn');
+  const links = document.querySelectorAll('.mobile-menu__link');
+
+  if (!hamburgerBtn || !mobileMenu) return;
+
+  function toggleMenu(forceClose = false) {
+    const isOpen = !forceClose && !mobileMenu.classList.contains('open');
+    mobileMenu.classList.toggle('open', isOpen);
+    hamburgerBtn.classList.toggle('active', isOpen);
+    hamburgerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    mobileMenu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+
+  hamburgerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  if (backdrop) {
+    backdrop.addEventListener('click', () => toggleMenu(true));
+  }
+
+  links.forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      toggleMenu(true);
+
+      // If a tool workspace is currently open, switch back to homepage first
+      if (DOM.workspace && !DOM.workspace.classList.contains('hidden')) {
+        closeTool();
+      }
+
+      if (targetId && targetId.startsWith('#')) {
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          e.preventDefault();
+          setTimeout(() => {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 60);
+        }
+      }
+    });
+  });
+
+  if (feedbackBtn && typeof openFeedbackModal === 'function') {
+    feedbackBtn.addEventListener('click', () => {
+      toggleMenu(true);
+      openFeedbackModal();
+    });
+  }
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+      toggleMenu(true);
+    }
+  });
+
+  // Close on resize to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && mobileMenu.classList.contains('open')) {
+      toggleMenu(true);
+    }
   });
 }
 
@@ -562,9 +844,19 @@ function openTool(toolId) {
   files = [];
   cleanupOutputs();
 
+  // Close mobile menu if open
+  const mobileMenu = document.getElementById('mobileMenu');
+  const hamburgerBtn = document.getElementById('navHamburger');
+  if (mobileMenu && mobileMenu.classList.contains('open')) {
+    mobileMenu.classList.remove('open');
+    if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
   // Switch views
   DOM.homepage.classList.add('hidden');
   DOM.workspace.classList.remove('hidden');
+  if (DOM.navLinks) DOM.navLinks.classList.add('hidden');
   DOM.navCenter.classList.remove('hidden');
   DOM.navToolLabel.textContent = tool.name;
 
@@ -642,6 +934,7 @@ function closeTool() {
 
   DOM.workspace.classList.add('hidden');
   DOM.homepage.classList.remove('hidden');
+  if (DOM.navLinks) DOM.navLinks.classList.remove('hidden');
   DOM.navCenter.classList.add('hidden');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1744,12 +2037,15 @@ function initScrollReveal() {
 // Init
 // ============================================================
 renderToolCards();
+initBeamFlow();
+initExclusiveTabNavbar();
+initMobileNavbarMenu();
+initScrollRotateGallery();
 initConversionCounter();
 updateWordCounterStats('');
 initScrollReveal();
 initCategoryTabs();
 initSearchKeyboardShortcut();
-initNavbarInteractions();
 
 console.log('Filefy 3.0 loaded: ready to convert');
 

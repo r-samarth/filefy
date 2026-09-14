@@ -99,11 +99,12 @@
       <span class="navbar__badge">v3</span>
     </div>
 
-    <!-- Category Quick Links on Homepage -->
-    <div class="navbar__links" id="navLinks">
-      <a href="#catPdf" class="navbar__link">PDF Tools</a>
-      <a href="#catImage" class="navbar__link">Image Converter</a>
-      <a href="#catDocument" class="navbar__link">Document Tools</a>
+    <!-- Category Quick Links on Homepage (Exclusive Tab style) -->
+    <div class="navbar__links" id="navLinks" role="tablist">
+      <div class="navbar__links-indicator" id="navIndicator"></div>
+      <a href="#catPdf" class="navbar__link active" data-category="pdf" role="tab">PDF Tools</a>
+      <a href="#catImage" class="navbar__link" data-category="image" role="tab">Image Converter</a>
+      <a href="#catDocument" class="navbar__link" data-category="document" role="tab">Document Tools</a>
     </div>
 
     <!-- Center on Workspace (Back Button + Tool Label) -->
@@ -127,8 +128,67 @@
         </svg>
         <span id="totalConversions">0</span> converted
       </div>
+
+      <!-- Animated Hamburger Button (Mobile <= 768px) -->
+      <button class="navbar__hamburger" id="navHamburger" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span class="navbar__hamburger-line line-top"></span>
+        <span class="navbar__hamburger-line line-mid"></span>
+        <span class="navbar__hamburger-line line-bot"></span>
+      </button>
     </div>
   </nav>
+
+  <!-- Mobile Navigation Menu Drawer (Glassmorphic Dropdown) -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu__backdrop" id="mobileMenuBackdrop"></div>
+    <div class="mobile-menu__panel">
+      <div class="mobile-menu__header">
+        <span class="mobile-menu__title">Quick Navigation</span>
+        <span class="mobile-menu__badge">13 Tools</span>
+      </div>
+      <div class="mobile-menu__links">
+        <a href="#catPdf" class="mobile-menu__link" data-category="pdf">
+          <div class="mobile-menu__icon mobile-menu__icon--pdf">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="mobile-menu__text">
+            <span class="mobile-menu__label">PDF Tools</span>
+            <span class="mobile-menu__desc">6 tools • Merge, Split, Convert</span>
+          </div>
+          <svg class="mobile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+
+        <a href="#catImage" class="mobile-menu__link" data-category="image">
+          <div class="mobile-menu__icon mobile-menu__icon--image">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <div class="mobile-menu__text">
+            <span class="mobile-menu__label">Image Converter</span>
+            <span class="mobile-menu__desc">5 tools • JPG, PNG, WebP, Compress</span>
+          </div>
+          <svg class="mobile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+
+        <a href="#catDocument" class="mobile-menu__link" data-category="document">
+          <div class="mobile-menu__icon mobile-menu__icon--document">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="mobile-menu__text">
+            <span class="mobile-menu__label">Document Tools</span>
+            <span class="mobile-menu__desc">2 tools • Word Counter, Text to PDF</span>
+          </div>
+          <svg class="mobile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+
+      <div class="mobile-menu__footer">
+        <button class="mobile-menu__feedback-btn" id="mobileFeedbackBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Send Feedback
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- ========== HOMEPAGE ========== -->
   <main class="homepage" id="homepage">
@@ -137,8 +197,40 @@
         <span class="hero__pulse"></span>
         <span>100% Client-Side. No Server Uploads</span>
       </div>
-      <h1 class="hero__title">Filefy</h1>
-      <p class="hero__subtitle"><span class="hero__subtitle-serif">Every file format, converted in seconds.</span> Private, instant, in your browser.</p>
+      <h1 class="hero__title aurora-text">Filefy</h1>
+      <p class="hero__subtitle"><span class="hero__subtitle-serif">Every file format, converted in seconds.</span> <span class="shiny-text">Private, instant, in your browser.</span></p>
+
+      <!-- Scroll Rotate Gallery (Lightswind 3D cylindrical fan) -->
+      <div class="scroll-gallery" id="scrollGallery" aria-label="Supported File Formats">
+        <div class="scroll-gallery__card" data-index="0" title="PDF Converter & Tools">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          <span>PDF</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="1" title="JPG Image Converter">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>JPG</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="2" title="PNG Transparent Graphics">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          <span>PNG</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="3" title="Modern WebP Compression">
+          <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>WEBP</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="4" title="Word & Documents">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>DOCX</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="5" title="Merge Multiple Files">
+          <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.828L3 3"/><path d="m15 9 6-6"/></svg>
+          <span>MERGE</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="6" title="Compress File Size">
+          <svg viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><polyline points="12 12 12 21"/><polyline points="8 17 12 21 16 17"/></svg>
+          <span>COMPRESS</span>
+        </div>
+      </div>
 
       <div class="hero__search-wrap">
         <div class="hero__search">
@@ -169,14 +261,14 @@
             stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
-          <span>Zero Server Uploads</span>
+          <span class="shiny-text">Zero Server Uploads</span>
         </div>
         <div class="trust-pill">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
           </svg>
-          <span>WebAssembly Speed</span>
+          <span class="shiny-text">WebAssembly Speed</span>
         </div>
         <div class="trust-pill">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -184,7 +276,7 @@
             <circle cx="12" cy="12" r="10" />
             <polyline points="12 6 12 12 16 14" />
           </svg>
-          <span>100% Free & Unlimited</span>
+          <span class="shiny-text">100% Free & Unlimited</span>
         </div>
       </div>
     </section>
@@ -200,7 +292,7 @@
               <polyline points="14 2 14 8 20 8" />
             </svg>
           </span>
-          PDF Tools
+          <span class="shiny-text">PDF Tools</span>
         </h2>
         <span class="tool-category__count">6 tools</span>
       </div>
@@ -219,7 +311,7 @@
               <polyline points="21 15 16 10 5 21" />
             </svg>
           </span>
-          Image Converter
+          <span class="shiny-text">Image Converter</span>
         </h2>
         <span class="tool-category__count">5 tools</span>
       </div>
@@ -240,7 +332,7 @@
               <polyline points="10 9 9 9 8 9" />
             </svg>
           </span>
-          Document Tools
+          <span class="shiny-text">Document Tools</span>
         </h2>
         <span class="tool-category__count">2 tools</span>
       </div>
