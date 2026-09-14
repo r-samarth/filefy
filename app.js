@@ -981,7 +981,7 @@ function initScrollRotateGallery() {
 
   function getDimensions() {
     const w = window.innerWidth;
-    if (w < 480) return { radius: 110, spread: 95 };
+    if (w < 480) return { radius: 138, spread: 108 };
     if (w < 768) return { radius: 160, spread: 120 };
     return { radius: 215, spread: 145 };
   }
