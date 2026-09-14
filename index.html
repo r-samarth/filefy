@@ -11,6 +11,9 @@
     content="file converter, PDF converter, image converter, PDF to JPG, JPG to PNG, compress PDF, merge PDF, split PDF, word counter, free converter">
   <meta name="author" content="Filefy">
   <meta name="theme-color" content="#f5f4f2">
+  <!-- Cyber Protection & Security Policy -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Filefy: Convert Any File, Instantly</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +21,7 @@
     href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="icon" type="image/png" href="logo.png">
 </head>
 
 <body>
@@ -94,7 +97,7 @@
   <!-- ========== NAVBAR ========== -->
   <nav class="navbar" id="navbar">
     <div class="navbar__left" id="navHome">
-      <img src="logo.jpg" alt="Filefy Logo" class="navbar__logo">
+      <img src="logo.png" alt="Filefy Logo" class="navbar__logo">
       <span class="navbar__brand">Filefy</span>
       <span class="navbar__badge">v3</span>
     </div>
@@ -144,7 +147,13 @@
     <div class="mobile-menu__panel">
       <div class="mobile-menu__header">
         <span class="mobile-menu__title">Quick Navigation</span>
-        <span class="mobile-menu__badge">13 Tools</span>
+        <span class="mobile-menu__badge">25 Tools</span>
+      </div>
+      <div class="mobile-menu__stat" id="mobileConversionStat" title="Files converted privately on this device">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+        <span><strong id="mobileTotalConversions">0</strong> converted on this device</span>
       </div>
       <div class="mobile-menu__links">
         <a href="#catPdf" class="mobile-menu__link" data-category="pdf">
@@ -153,7 +162,7 @@
           </div>
           <div class="mobile-menu__text">
             <span class="mobile-menu__label">PDF Tools</span>
-            <span class="mobile-menu__desc">6 tools • Merge, Split, Convert</span>
+            <span class="mobile-menu__desc">15 tools • Merge, Split, Rotate, Watermark & more</span>
           </div>
           <svg class="mobile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
@@ -175,7 +184,7 @@
           </div>
           <div class="mobile-menu__text">
             <span class="mobile-menu__label">Document Tools</span>
-            <span class="mobile-menu__desc">2 tools • Word Counter, Text to PDF</span>
+            <span class="mobile-menu__desc">5 tools • Word Counter, Markdown, HTML to PDF</span>
           </div>
           <svg class="mobile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
@@ -201,34 +210,54 @@
       <p class="hero__subtitle"><span class="hero__subtitle-serif">Every file format, converted in seconds.</span> <span class="shiny-text">Private, instant, in your browser.</span></p>
 
       <!-- Scroll Rotate Gallery (Lightswind 3D cylindrical fan) -->
-      <div class="scroll-gallery" id="scrollGallery" aria-label="Supported File Formats">
-        <div class="scroll-gallery__card" data-index="0" title="PDF Converter & Tools">
+      <div class="scroll-gallery" id="scrollGallery" aria-label="Supported File Formats & Tools">
+        <div class="scroll-gallery__card" data-index="0" data-tool="all-to-pdf" title="All to PDF">
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-          <span>PDF</span>
+          <span>ALL TO PDF</span>
         </div>
-        <div class="scroll-gallery__card" data-index="1" title="JPG Image Converter">
-          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          <span>JPG</span>
+        <div class="scroll-gallery__card" data-index="1" data-tool="rotate-pdf" title="Rotate PDF Pages">
+          <svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6"/><path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          <span>ROTATE</span>
         </div>
-        <div class="scroll-gallery__card" data-index="2" title="PNG Transparent Graphics">
-          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-          <span>PNG</span>
+        <div class="scroll-gallery__card" data-index="2" data-tool="add-watermark" title="Add Text Watermark">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+          <span>WATERMARK</span>
         </div>
-        <div class="scroll-gallery__card" data-index="3" title="Modern WebP Compression">
-          <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          <span>WEBP</span>
+        <div class="scroll-gallery__card" data-index="3" data-tool="remove-pages" title="Remove or Extract Pages">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          <span>PAGES</span>
         </div>
-        <div class="scroll-gallery__card" data-index="4" title="Word & Documents">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <div class="scroll-gallery__card" data-index="4" data-tool="add-page-numbers" title="Insert Page Numbers">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M10 13h2v5"/><line x1="9" y1="18" x2="13" y2="18"/><circle cx="16" cy="16" r="1.5"/></svg>
+          <span>NUMBERS</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="5" data-tool="pdf-to-markdown" title="Convert PDF to Markdown">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="6 15 8 9 10 12 12 9 14 15"/><line x1="18" y1="9" x2="18" y2="15"/><polyline points="16 13 18 15 20 13"/></svg>
+          <span>MARKDOWN</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="6" data-tool="pdf-to-word" title="PDF to Word Document">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="7 13 8.5 17 10 13 11.5 17 13 13"/></svg>
           <span>DOCX</span>
         </div>
-        <div class="scroll-gallery__card" data-index="5" title="Merge Multiple Files">
+        <div class="scroll-gallery__card" data-index="7" data-tool="merge-pdf" title="Merge Multiple PDFs">
           <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.828L3 3"/><path d="m15 9 6-6"/></svg>
           <span>MERGE</span>
         </div>
-        <div class="scroll-gallery__card" data-index="6" title="Compress File Size">
+        <div class="scroll-gallery__card" data-index="8" data-tool="split-pdf" title="Split PDF Pages">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="16" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+          <span>SPLIT</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="9" data-tool="compress-pdf" title="Compress PDF Size">
           <svg viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><polyline points="12 12 12 21"/><polyline points="8 17 12 21 16 17"/></svg>
           <span>COMPRESS</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="10" data-tool="pdf-grayscale" title="PDF to Grayscale & B/W">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></svg>
+          <span>GRAYSCALE</span>
+        </div>
+        <div class="scroll-gallery__card" data-index="11" data-tool="unlock-pdf" title="Unlock Password Protected PDF">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          <span>UNLOCK</span>
         </div>
       </div>
 
@@ -248,10 +277,10 @@
 
       <!-- Quick Category Filter Pills -->
       <div class="category-tabs" id="categoryTabs">
-        <button class="category-tab active" data-category="all" type="button">All Tools <span class="tab-count">13</span></button>
-        <button class="category-tab" data-category="pdf" type="button">PDF Tools <span class="tab-count">6</span></button>
+        <button class="category-tab active" data-category="all" type="button">All Tools <span class="tab-count">25</span></button>
+        <button class="category-tab" data-category="pdf" type="button">PDF Tools <span class="tab-count">15</span></button>
         <button class="category-tab" data-category="image" type="button">Image Converter <span class="tab-count">5</span></button>
-        <button class="category-tab" data-category="document" type="button">Document Tools <span class="tab-count">2</span></button>
+        <button class="category-tab" data-category="document" type="button">Document Tools <span class="tab-count">5</span></button>
       </div>
 
       <!-- Trust Strip -->
@@ -294,7 +323,7 @@
           </span>
           <span class="shiny-text">PDF Tools</span>
         </h2>
-        <span class="tool-category__count">6 tools</span>
+        <span class="tool-category__count">15 tools</span>
       </div>
       <div class="tool-grid" id="pdfToolGrid"></div>
     </section>
@@ -334,7 +363,7 @@
           </span>
           <span class="shiny-text">Document Tools</span>
         </h2>
-        <span class="tool-category__count">2 tools</span>
+        <span class="tool-category__count">5 tools</span>
       </div>
       <div class="tool-grid" id="documentToolGrid"></div>
     </section>
