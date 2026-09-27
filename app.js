@@ -566,7 +566,7 @@ const TEXT_EXTS = new Set([
   'cfg', 'conf', 'sh', 'bat', 'ps1', 'swift', 'kt', 'r',
 ]);
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB per file
+const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB per file
 
 // ============================================================
 // State
@@ -1814,7 +1814,7 @@ function addFiles(rawFiles) {
   for (const file of rawFiles) {
     const ext = getExt(file.name);
     if (file.size > MAX_FILE_SIZE) {
-      showToast(`File too large: ${file.name} (max 100 MB)`, 'error');
+      showToast(`File too large: ${file.name} (max 500 MB)`, 'error');
       continue;
     }
     const cat = getFileCategory(ext);
@@ -1860,6 +1860,8 @@ function moveFile(fromIndex, toIndex) {
 // ============================================================
 // Render File List
 // ============================================================
+const COMPACT_THRESHOLD = 7; // Show compact summary when 7+ files
+
 function renderFileList() {
   if (files.length === 0) {
     DOM.toolFileList.classList.add('hidden');
@@ -1874,6 +1876,90 @@ function renderFileList() {
   DOM.toolFileCount.textContent = files.length;
   DOM.toolFileItems.innerHTML = '';
 
+  // ── Compact Summary Mode (7+ files) ──
+  if (files.length >= COMPACT_THRESHOLD) {
+    renderCompactSummary();
+    return;
+  }
+
+  // ── Normal Card Mode (≤6 files) ──
+  renderFileCards();
+}
+
+/**
+ * Compact summary: shows a clean stats banner instead of individual cards
+ * when 7+ files are uploaded. Prevents UI overcrowding.
+ */
+function renderCompactSummary() {
+  const totalSize = files.reduce((sum, f) => sum + f.size, 0);
+
+  // Count file types
+  const typeCounts = {};
+  files.forEach(f => {
+    const label = f.ext.toUpperCase();
+    typeCounts[label] = (typeCounts[label] || 0) + 1;
+  });
+  const typeChips = Object.entries(typeCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([ext, count]) => `<span class="compact-summary__chip">${ext} <strong>×${count}</strong></span>`)
+    .join('');
+
+  const summary = document.createElement('div');
+  summary.className = 'compact-summary';
+  summary.innerHTML = `
+    <div class="compact-summary__main">
+      <div class="compact-summary__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <div class="compact-summary__info">
+        <div class="compact-summary__count">
+          <strong>${files.length}</strong> files ready
+          <span class="compact-summary__size">· ${formatSize(totalSize)} total</span>
+        </div>
+        <div class="compact-summary__types">${typeChips}</div>
+      </div>
+    </div>
+    <div class="compact-summary__actions">
+      <button class="compact-summary__toggle" id="compactToggleExpand" type="button" title="Show all files">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+        Show all
+      </button>
+    </div>
+  `;
+
+  // Toggle to expand and show all files
+  summary.querySelector('#compactToggleExpand').addEventListener('click', () => {
+    DOM.toolFileItems.innerHTML = '';
+    renderFileCards();
+    // Add a "collapse" button at the top
+    const collapseBar = document.createElement('div');
+    collapseBar.className = 'compact-summary__collapse-bar';
+    collapseBar.innerHTML = `
+      <button class="compact-summary__toggle" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="18 15 12 9 6 15"/>
+        </svg>
+        Collapse (${files.length} files)
+      </button>
+    `;
+    collapseBar.querySelector('button').addEventListener('click', () => {
+      DOM.toolFileItems.innerHTML = '';
+      renderCompactSummary();
+    });
+    DOM.toolFileItems.prepend(collapseBar);
+  });
+
+  DOM.toolFileItems.appendChild(summary);
+}
+
+/**
+ * Standard file card rendering (used for ≤6 files or when expanded).
+ */
+function renderFileCards() {
   files.forEach((f, idx) => {
     const card = document.createElement('div');
     card.className = 'file-card';
